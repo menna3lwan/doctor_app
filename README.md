@@ -1,206 +1,247 @@
-# Hen Lehen – هُنَّ لَهُنَّ  
-## Doctor Application (Flutter)
 
-Hen Lehen Doctor Application is a mobile application developed using **Flutter**, integrated with **Firebase** and **Supabase**, and designed exclusively for **female doctors** as part of the Hen Lehen – هُنَّ لَهُنَّ women-only healthcare platform.
-
-This application allows doctors to manage appointments, patients, clinic branches, profiles, and online medical consultations in a secure and professional environment.
+# Hen Lehen – هُنَّ لَهُنَّ
+## Doctor Application
 
 ---
 
-## Project Purpose
+## 1. Introduction
 
-The Doctor Application represents the professional side of the Hen Lehen platform.  
-It enables licensed female doctors to:
+Hen Lehen – هُنَّ لَهُنَّ Doctor Application is a mobile application developed using **Flutter** and integrated with **Firebase** and **Supabase**.  
+The application is designed exclusively for **female doctors** and represents the doctor-side system of the Hen Lehen women-only healthcare platform.
 
-- Manage daily appointments
-- Provide online consultations through medical chat
-- Manage clinic branches and locations
-- View and track patient information
-- Control profile and application settings
-
-The application follows a clean and scalable Flutter project structure.
+The main goal of this application is to provide a secure, organized, and professional environment that enables doctors to manage consultations, appointments, clinics, and patients efficiently.
 
 ---
 
-## Technologies Used
+## 2. Project Objectives
 
-- Flutter (Cross-platform mobile development)
-- Firebase
-  - Authentication
-  - Notifications
-- Supabase
-  - Database
-  - Backend services
-- Provider (State Management)
-- Clean folder-based architecture
+- Provide a dedicated application for female doctors
+- Support online and clinic-based medical consultations
+- Manage appointments and patient records
+- Organize clinic branches and locations
+- Maintain privacy, security, and medical professionalism
+- Deliver a clean, scalable, and maintainable Flutter architecture
 
 ---
 
-## Project Structure
+## 3. Target Users
 
-The project follows a modular and organized structure under the `lib` directory.
-
----
-
-### lib/
-
-#### main.dart
-- Application entry point
-- Initializes the app
-- Loads theme, routes, and localization
+| User Type | Description |
+|---------|-------------|
+| Doctor | Licensed female medical professional |
+| System | Handles authentication, data storage, and workflows |
 
 ---
 
-### config/
-Handles global application configuration.
+## 4. Technology Stack
 
-- `theme.dart`  
-  Defines light and dark themes.
-
-- `routes.dart`  
-  Centralized route management for navigation.
-
-- `providers.dart`  
-  Application-wide providers and state management.
-
-- `locale.dart`  
-  Language and localization configuration.
+| Layer | Technology |
+|-----|-----------|
+| Mobile Framework | Flutter |
+| Authentication | Firebase Authentication |
+| Backend & Database | Supabase |
+| Notifications | Firebase |
+| State Management | Provider |
+| Architecture Pattern | Feature-based modular structure |
 
 ---
 
-### models/
-- `models.dart`  
-  Contains application data models such as:
-  - Doctor
-  - Patient
-  - Appointment
-  - Branch
+## 5. High-Level System Architecture
+
+```
+
+┌──────────────────────────────┐
+│        Flutter UI Layer      │
+│  Screens - Widgets - Theme   │
+└───────────────┬──────────────┘
+│
+State Management
+Provider
+│
+┌───────────────┴──────────────┐
+│      Application Logic       │
+│  Auth - Appointments - Chat  │
+└───────────────┬──────────────┘
+│
+┌───────┴────────┐
+│                │
+┌───────▼───────┐ ┌──────▼──────┐
+│   Firebase    │ │   Supabase  │
+│ Authentication│ │ Database    │
+└───────────────┘ └─────────────┘
+
+```
 
 ---
 
-### screens/
-Contains all application UI screens, grouped by feature.
+## 6. Project Structure
+
+```
+
+lib/
+│
+├── main.dart
+│
+├── config/
+│   ├── theme.dart
+│   ├── routes.dart
+│   ├── providers.dart
+│   └── locale.dart
+│
+├── models/
+│   └── models.dart
+│
+├── screens/
+│   ├── auth/
+│   │   ├── login_screen.dart
+│   │   ├── register_screen.dart
+│   │   └── pending_screen.dart
+│   │
+│   ├── dashboard/
+│   │   ├── main_screen.dart
+│   │   └── dashboard_screen.dart
+│   │
+│   ├── appointments/
+│   │   └── appointments_screen.dart
+│   │
+│   ├── chat/
+│   │   └── chat_screen.dart
+│   │
+│   ├── branches/
+│   │   ├── branches_screen.dart
+│   │   └── add_branch_screen.dart
+│   │
+│   ├── patients/
+│   │   └── patients_screen.dart
+│   │
+│   └── profile/
+│       └── profile_screen.dart
+│
+└── widgets/
+└── widgets.dart
+
+```
 
 ---
 
-#### auth/
-Authentication-related screens.
+## 7. Authentication Flow
 
-- `login_screen.dart`  
-  Doctor login screen.
+```
 
-- `register_screen.dart`  
-  Doctor registration screen.
+Application Launch
+|
+v
+Login / Register
+|
+v
+Pending Verification
+|
+v
+Dashboard Access
 
-- `pending_screen.dart`  
-  Account pending verification screen after registration.
-
----
-
-#### dashboard/
-Main application navigation and overview.
-
-- `main_screen.dart`  
-  Bottom navigation container for main sections.
-
-- `dashboard_screen.dart`  
-  Doctor dashboard showing statistics and daily overview.
+```
 
 ---
 
-#### appointments/
-- `appointments_screen.dart`  
-  Displays all appointments with filtering by status.
+## 8. Main Navigation Sections
+
+| Section | Description |
+|-------|-------------|
+| Dashboard | Overview, statistics, and daily summary |
+| Appointments | Manage booking requests and statuses |
+| Patients | Patient list and visit history |
+| Chat | Online medical consultation |
+| Profile | Doctor personal and professional data |
+| Settings | Application configuration |
 
 ---
 
-#### chat/
-- `chat_screen.dart`  
-  Medical chat screen for online consultations only.
+## 9. Appointment Types
+
+| Type | Description | Chat Availability |
+|----|-------------|------------------|
+| Online | Consultation via in-app chat | Enabled |
+| Clinic | Physical visit at clinic | Disabled |
 
 ---
 
-#### branches/
-Clinic management screens.
+## 10. Online Consultation Workflow
 
-- `branches_screen.dart`  
-  Displays doctor clinic branches.
+```
 
-- `add_branch_screen.dart`  
-  Allows adding a new clinic branch with location details.
+Appointment Confirmed
+|
+Payment Completed
+|
+Chat Session Activated
+|
+Consultation Completed
 
----
-
-#### patients/
-- `patients_screen.dart`  
-  Displays patient list and visit history.
-
----
-
-#### profile/
-- `profile_screen.dart`  
-  Doctor profile details and information.
+```
 
 ---
 
-#### settings/
-- Settings-related screens and configurations.
+## 11. Clinic Branch Management
+
+Doctors can add and manage multiple clinic branches.
+
+| Field | Description |
+|-----|------------|
+| Branch Name | Clinic identifier |
+| Governorate | Clinic location |
+| City | City name |
+| Address | Full address |
+| Working Days | Available schedule |
+| Consultation Fee | Visit cost |
 
 ---
 
-### widgets/
-- `widgets.dart`  
-  Reusable UI components shared across the application.
+## 12. Patient Management
+
+Doctors can:
+- View all registered patients
+- Search patients by name
+- Track visit history
+- View last visit date and visit count
+
+| Data | Purpose |
+|----|--------|
+| Last Visit | Follow-up |
+| Visit Count | Medical history tracking |
 
 ---
 
-## Application Flow
+## 13. UI and Design Guidelines
 
-1. Doctor opens the application
-2. Login or Register
-3. Account enters pending verification (if new)
-4. Dashboard is displayed after approval
-5. Doctor navigates using main screen:
-   - Dashboard
-   - Appointments
-   - Patients
-   - Profile
-   - Settings
-6. Online consultations are handled via chat screen
-7. Clinic branches are managed through branches screens
+- Clean medical layout
+- Feminine and calm color palette
+- Light and dark mode support
+- Arabic and English language support
+- RTL and LTR layout handling
+- Reusable and consistent UI components
 
 ---
 
-## Online Consultation Logic
+## 14. Project Status
 
-- Chat is available only for online appointments
-- Each chat session is linked to a single appointment
-- Chat is not available for clinic-based consultations
-- Doctors can end the consultation session manually
-
----
-
-## Architecture Overview
-
-- UI Layer: Flutter Screens and Widgets
-- State Management: Provider
-- Authentication: Firebase
-- Backend and Database: Supabase
-- Routing: Centralized in routes.dart
-- Theming and Localization: Centralized in config folder
+| Component | Status |
+|---------|--------|
+| Flutter UI | Completed |
+| Firebase Integration | Completed |
+| Supabase Integration | Completed |
+| Doctor Workflow | Implemented |
+| Patient Application | Separate module |
 
 ---
 
-## Project Status
+## 15. Conclusion
 
-- Flutter application fully structured
-- Firebase and Supabase integrated
-- Core doctor workflows implemented
-- Clean and scalable codebase
-- Suitable for graduation projects and real-world MVPs
+Hen Lehen – هُنَّ لَهُنَّ Doctor Application is a structured and scalable Flutter application that reflects real-world medical workflows.  
+The project is suitable for graduation projects, healthcare prototypes, and production-ready MVPs.
 
 ---
 
-## License
+## 16. License
 
 This project is developed for educational and demonstration purposes as part of the Hen Lehen – هُنَّ لَهُنَّ platform.
+```
