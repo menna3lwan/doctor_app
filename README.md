@@ -2,29 +2,49 @@
 # Hen Lehen – هُنَّ لَهُنَّ
 ## Doctor Application
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-Mobile%20App-02569B?style=for-the-badge&logo=flutter&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Firebase-Authentication-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
+  <img src="https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white"/>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-blue?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Users-Female%20Doctors-purple?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Status-Ready-success?style=flat-square"/>
+</p>
+
 ---
 
-## 1. Introduction
+## Overview
 
 Hen Lehen – هُنَّ لَهُنَّ Doctor Application is a mobile application developed using **Flutter** and integrated with **Firebase** and **Supabase**.  
 The application is designed exclusively for **female doctors** and represents the doctor-side system of the Hen Lehen women-only healthcare platform.
 
-The main goal of this application is to provide a secure, organized, and professional environment that enables doctors to manage consultations, appointments, clinics, and patients efficiently.
+The application provides a secure, professional, and structured environment that allows doctors to manage appointments, online consultations, clinic branches, and patient data efficiently.
 
 ---
 
-## 2. Project Objectives
+## Demo Video
+
+This video demonstrates the main workflows of the Hen Lehen – هُنَّ لَهُنَّ Doctor Application, including authentication, dashboard navigation, appointment management, online medical chat, and clinic branch management.
+
+[Watch Demo Video](assets/hen_lehen_doctor_demo.mp4)
+
+---
+
+## Project Objectives
 
 - Provide a dedicated application for female doctors
 - Support online and clinic-based medical consultations
-- Manage appointments and patient records
+- Manage appointments and schedules efficiently
 - Organize clinic branches and locations
-- Maintain privacy, security, and medical professionalism
-- Deliver a clean, scalable, and maintainable Flutter architecture
+- Ensure privacy, security, and medical professionalism
+- Maintain a clean, scalable Flutter architecture
 
 ---
 
-## 3. Target Users
+## Target Users
 
 | User Type | Description |
 |---------|-------------|
@@ -33,48 +53,48 @@ The main goal of this application is to provide a secure, organized, and profess
 
 ---
 
-## 4. Technology Stack
+## Technology Stack
 
 | Layer | Technology |
 |-----|-----------|
 | Mobile Framework | Flutter |
 | Authentication | Firebase Authentication |
-| Backend & Database | Supabase |
+| Backend Services | Supabase |
+| Database | Supabase |
 | Notifications | Firebase |
 | State Management | Provider |
-| Architecture Pattern | Feature-based modular structure |
 
 ---
 
-## 5. High-Level System Architecture
+## System Architecture
 
 ```
 
-┌──────────────────────────────┐
-│        Flutter UI Layer      │
-│  Screens - Widgets - Theme   │
-└───────────────┬──────────────┘
+┌───────────────────────────────┐
+│         Flutter UI Layer      │
+│ Screens • Widgets • Theme     │
+└───────────────┬───────────────┘
 │
 State Management
 Provider
 │
-┌───────────────┴──────────────┐
-│      Application Logic       │
-│  Auth - Appointments - Chat  │
-└───────────────┬──────────────┘
+┌───────────────┴───────────────┐
+│       Application Logic       │
+│ Auth • Appointments • Chat   │
+└───────────────┬───────────────┘
 │
 ┌───────┴────────┐
 │                │
-┌───────▼───────┐ ┌──────▼──────┐
-│   Firebase    │ │   Supabase  │
-│ Authentication│ │ Database    │
-└───────────────┘ └─────────────┘
+┌───────▼────────┐ ┌─────▼────────┐
+│   Firebase     │ │   Supabase    │
+│ Authentication│ │ Database/API  │
+└────────────────┘ └──────────────┘
 
 ```
 
 ---
 
-## 6. Project Structure
+## Project Structure
 
 ```
 
@@ -93,29 +113,12 @@ lib/
 │
 ├── screens/
 │   ├── auth/
-│   │   ├── login_screen.dart
-│   │   ├── register_screen.dart
-│   │   └── pending_screen.dart
-│   │
 │   ├── dashboard/
-│   │   ├── main_screen.dart
-│   │   └── dashboard_screen.dart
-│   │
 │   ├── appointments/
-│   │   └── appointments_screen.dart
-│   │
 │   ├── chat/
-│   │   └── chat_screen.dart
-│   │
 │   ├── branches/
-│   │   ├── branches_screen.dart
-│   │   └── add_branch_screen.dart
-│   │
 │   ├── patients/
-│   │   └── patients_screen.dart
-│   │
 │   └── profile/
-│       └── profile_screen.dart
 │
 └── widgets/
 └── widgets.dart
@@ -124,48 +127,46 @@ lib/
 
 ---
 
-## 7. Authentication Flow
+## Authentication Flow
 
 ```
 
 Application Launch
 |
-v
 Login / Register
 |
-v
 Pending Verification
 |
-v
 Dashboard Access
 
 ```
 
 ---
 
-## 8. Main Navigation Sections
+## Main Application Modules
 
-| Section | Description |
-|-------|-------------|
-| Dashboard | Overview, statistics, and daily summary |
-| Appointments | Manage booking requests and statuses |
-| Patients | Patient list and visit history |
+| Module | Description |
+|------|-------------|
+| Dashboard | Overview and statistics |
+| Appointments | Manage booking requests |
+| Patients | Patient history and visits |
 | Chat | Online medical consultation |
-| Profile | Doctor personal and professional data |
+| Branches | Clinic management |
+| Profile | Doctor information |
 | Settings | Application configuration |
 
 ---
 
-## 9. Appointment Types
+## Appointment Types
 
 | Type | Description | Chat Availability |
 |----|-------------|------------------|
-| Online | Consultation via in-app chat | Enabled |
+| Online | In-app medical consultation | Enabled |
 | Clinic | Physical visit at clinic | Disabled |
 
 ---
 
-## 10. Online Consultation Workflow
+## Online Consultation Workflow
 
 ```
 
@@ -173,7 +174,7 @@ Appointment Confirmed
 |
 Payment Completed
 |
-Chat Session Activated
+Chat Session Enabled
 |
 Consultation Completed
 
@@ -181,25 +182,25 @@ Consultation Completed
 
 ---
 
-## 11. Clinic Branch Management
+## Clinic Branch Management
 
-Doctors can add and manage multiple clinic branches.
+Doctors can manage multiple clinic branches.
 
 | Field | Description |
 |-----|------------|
 | Branch Name | Clinic identifier |
-| Governorate | Clinic location |
+| Governorate | Location |
 | City | City name |
 | Address | Full address |
-| Working Days | Available schedule |
+| Working Days | Schedule |
 | Consultation Fee | Visit cost |
 
 ---
 
-## 12. Patient Management
+## Patient Management
 
 Doctors can:
-- View all registered patients
+- View patient list
 - Search patients by name
 - Track visit history
 - View last visit date and visit count
@@ -207,22 +208,22 @@ Doctors can:
 | Data | Purpose |
 |----|--------|
 | Last Visit | Follow-up |
-| Visit Count | Medical history tracking |
+| Visit Count | Medical history |
 
 ---
 
-## 13. UI and Design Guidelines
+## UI and Design Guidelines
 
-- Clean medical layout
+- Clean and professional medical layout
 - Feminine and calm color palette
 - Light and dark mode support
-- Arabic and English language support
+- Arabic and English localization
 - RTL and LTR layout handling
-- Reusable and consistent UI components
+- Reusable UI components
 
 ---
 
-## 14. Project Status
+## Project Status
 
 | Component | Status |
 |---------|--------|
@@ -230,18 +231,22 @@ Doctors can:
 | Firebase Integration | Completed |
 | Supabase Integration | Completed |
 | Doctor Workflow | Implemented |
-| Patient Application | Separate module |
+| Patient Application | Separate Module |
 
 ---
 
-## 15. Conclusion
+## Conclusion
 
 Hen Lehen – هُنَّ لَهُنَّ Doctor Application is a structured and scalable Flutter application that reflects real-world medical workflows.  
 The project is suitable for graduation projects, healthcare prototypes, and production-ready MVPs.
 
 ---
 
-## 16. License
+## License
 
 This project is developed for educational and demonstration purposes as part of the Hen Lehen – هُنَّ لَهُنَّ platform.
 ```
+
+---
+
+قوليلي وهنقفله تسليم نهائي.
