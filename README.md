@@ -1,46 +1,58 @@
 
-# Hen Lehen – هُنَّ لَهُنَّ
+# Hen Lehen – هُنَّ لَهُنَّ  
 ## Doctor Application
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Flutter-Mobile%20App-02569B?style=for-the-badge&logo=flutter&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Flutter-Mobile%20Application-02569B?style=for-the-badge&logo=flutter&logoColor=white"/>
   <img src="https://img.shields.io/badge/Firebase-Authentication-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
-  <img src="https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Supabase-Backend%20%26%20Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white"/>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-blue?style=flat-square"/>
-  <img src="https://img.shields.io/badge/Users-Female%20Doctors-purple?style=flat-square"/>
-  <img src="https://img.shields.io/badge/Status-Ready-success?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-C8A97E?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Users-Female%20Doctors-D291BC?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Status-Production%20Ready-9BCF9B?style=flat-square"/>
 </p>
 
 ---
 
 ## Overview
 
-Hen Lehen – هُنَّ لَهُنَّ Doctor Application is a mobile application developed using **Flutter** and integrated with **Firebase** and **Supabase**.  
-The application is designed exclusively for **female doctors** and represents the doctor-side system of the Hen Lehen women-only healthcare platform.
+**Hen Lehen – هُنَّ لَهُنَّ Doctor Application** is a mobile application developed using **Flutter** and integrated with **Firebase** and **Supabase**.  
+The application is designed exclusively for **female doctors** and represents the professional (doctor-side) system of the Hen Lehen women-only healthcare platform.
 
-The application provides a secure, professional, and structured environment that allows doctors to manage appointments, online consultations, clinic branches, and patient data efficiently.
+The application provides a calm, secure, and feminine digital environment that enables doctors to manage medical consultations, appointments, clinic branches, and patient information with clarity and professionalism.
 
 ---
 
 ## Demo Video
 
-This video demonstrates the main workflows of the Hen Lehen – هُنَّ لَهُنَّ Doctor Application, including authentication, dashboard navigation, appointment management, online medical chat, and clinic branch management.
+This video presents a full walkthrough of the Hen Lehen – هُنَّ لَهُنَّ Doctor Application, demonstrating the core features and workflows.
 
-[Watch Demo Video](assets/hen_lehen_doctor_demo.mp4)
+[Watch Demo Video on YouTube](https://youtu.be/vsnvrcTbRHM)
+
+---
+
+## Vision & Concept
+
+Hen Lehen is built on the idea of creating a **safe and private healthcare space for women**.  
+The Doctor Application focuses on empowering female doctors with tools that are:
+
+- Organized and easy to use  
+- Respectful of medical privacy  
+- Designed with a soft and feminine visual identity  
+- Aligned with real-world medical workflows  
 
 ---
 
 ## Project Objectives
 
 - Provide a dedicated application for female doctors
-- Support online and clinic-based medical consultations
-- Manage appointments and schedules efficiently
-- Organize clinic branches and locations
-- Ensure privacy, security, and medical professionalism
-- Maintain a clean, scalable Flutter architecture
+- Support online and clinic-based consultations
+- Simplify appointment and schedule management
+- Enable clinic branch and location management
+- Maintain patient data privacy and security
+- Apply clean, scalable Flutter architecture
 
 ---
 
@@ -57,7 +69,7 @@ This video demonstrates the main workflows of the Hen Lehen – هُنَّ لَ�
 
 | Layer | Technology |
 |-----|-----------|
-| Mobile Framework | Flutter |
+| Mobile Development | Flutter |
 | Authentication | Firebase Authentication |
 | Backend Services | Supabase |
 | Database | Supabase |
@@ -66,29 +78,29 @@ This video demonstrates the main workflows of the Hen Lehen – هُنَّ لَ�
 
 ---
 
-## System Architecture
+## High-Level Architecture
 
 ```
 
-┌───────────────────────────────┐
-│         Flutter UI Layer      │
-│ Screens • Widgets • Theme     │
-└───────────────┬───────────────┘
+┌──────────────────────────────────┐
+│        Flutter Presentation      │
+│   Screens • Widgets • Theme      │
+└───────────────┬──────────────────┘
 │
 State Management
 Provider
 │
-┌───────────────┴───────────────┐
-│       Application Logic       │
-│ Auth • Appointments • Chat   │
-└───────────────┬───────────────┘
+┌───────────────┴──────────────────┐
+│        Application Logic         │
+│ Auth • Appointments • Chat      │
+└───────────────┬──────────────────┘
 │
-┌───────┴────────┐
-│                │
-┌───────▼────────┐ ┌─────▼────────┐
-│   Firebase     │ │   Supabase    │
-│ Authentication│ │ Database/API  │
-└────────────────┘ └──────────────┘
+┌───────┴──────────┐
+│                  │
+┌───────▼────────┐ ┌───────▼────────┐
+│   Firebase     │ │   Supabase      │
+│ Authentication│ │ Database & API  │
+└────────────────┘ └────────────────┘
 
 ```
 
@@ -127,29 +139,29 @@ lib/
 
 ---
 
-## Authentication Flow
+## Authentication & Verification Flow
 
 ```
 
 Application Launch
-|
+│
 Login / Register
-|
+│
 Pending Verification
-|
-Dashboard Access
+│
+Doctor Dashboard
 
 ```
 
 ---
 
-## Main Application Modules
+## Core Application Modules
 
 | Module | Description |
 |------|-------------|
-| Dashboard | Overview and statistics |
+| Dashboard | Daily overview and statistics |
 | Appointments | Manage booking requests |
-| Patients | Patient history and visits |
+| Patients | Patient list and history |
 | Chat | Online medical consultation |
 | Branches | Clinic management |
 | Profile | Doctor information |
@@ -157,12 +169,12 @@ Dashboard Access
 
 ---
 
-## Appointment Types
+## Consultation Types
 
-| Type | Description | Chat Availability |
-|----|-------------|------------------|
-| Online | In-app medical consultation | Enabled |
-| Clinic | Physical visit at clinic | Disabled |
+| Type | Description | Chat |
+|----|-------------|------|
+| Online Consultation | In-app medical chat | Enabled |
+| Clinic Visit | Physical appointment | Disabled |
 
 ---
 
@@ -171,11 +183,11 @@ Dashboard Access
 ```
 
 Appointment Confirmed
-|
+│
 Payment Completed
-|
-Chat Session Enabled
-|
+│
+Medical Chat Opened
+│
 Consultation Completed
 
 ```
@@ -184,7 +196,7 @@ Consultation Completed
 
 ## Clinic Branch Management
 
-Doctors can manage multiple clinic branches.
+Doctors can add and manage multiple clinic branches.
 
 | Field | Description |
 |-----|------------|
@@ -192,7 +204,7 @@ Doctors can manage multiple clinic branches.
 | Governorate | Location |
 | City | City name |
 | Address | Full address |
-| Working Days | Schedule |
+| Working Days | Weekly schedule |
 | Consultation Fee | Visit cost |
 
 ---
@@ -203,7 +215,7 @@ Doctors can:
 - View patient list
 - Search patients by name
 - Track visit history
-- View last visit date and visit count
+- View last visit date and number of visits
 
 | Data | Purpose |
 |----|--------|
@@ -212,14 +224,15 @@ Doctors can:
 
 ---
 
-## UI and Design Guidelines
+## UI & UX Design Principles
 
-- Clean and professional medical layout
-- Feminine and calm color palette
+- Soft feminine color palette
+- Calm and professional medical layout
 - Light and dark mode support
 - Arabic and English localization
 - RTL and LTR layout handling
-- Reusable UI components
+- Reusable and consistent UI components
+- Emotionally comfortable user experience
 
 ---
 
@@ -237,7 +250,8 @@ Doctors can:
 
 ## Conclusion
 
-Hen Lehen – هُنَّ لَهُنَّ Doctor Application is a structured and scalable Flutter application that reflects real-world medical workflows.  
+Hen Lehen – هُنَّ لَهُنَّ Doctor Application is a well-structured Flutter application that reflects real medical workflows while maintaining a feminine, calm, and professional design language.
+
 The project is suitable for graduation projects, healthcare prototypes, and production-ready MVPs.
 
 ---
@@ -245,8 +259,5 @@ The project is suitable for graduation projects, healthcare prototypes, and prod
 ## License
 
 This project is developed for educational and demonstration purposes as part of the Hen Lehen – هُنَّ لَهُنَّ platform.
-```
 
----
-
-قوليلي وهنقفله تسليم نهائي.
+قوليلي تحبي إيه ونقفله على أعلى مستوى.
