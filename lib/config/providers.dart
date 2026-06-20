@@ -4,6 +4,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:shared_ui/shared_ui.dart';
 import 'locale.dart';
 import '../models/models.dart';
+import '../repositories/auth_repository.dart';
 
 export 'locale.dart';
 
@@ -35,14 +36,15 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     await Future.delayed(const Duration(seconds: 1));
+    final authRepo = AuthRepository();
+    _doctor = await authRepo.login(email, password);
     
-    if (email.isEmpty || password.length < 6) {
+    if (_doctor == null) {
       _isLoading = false;
       notifyListeners();
       return false;
     }
 
-    _doctor = MockData.currentDoctor;
     _isLoggedIn = true;
     _isLoading = false;
     notifyListeners();

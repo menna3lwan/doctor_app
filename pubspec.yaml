@@ -23,6 +23,7 @@ dependencies:
   shared_ui:
     path: ../packages/shared_ui
   dio: ^5.9.2
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:

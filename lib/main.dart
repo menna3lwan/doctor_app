@@ -6,6 +6,13 @@ import 'config/providers.dart';
 import 'config/routes.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint('Global Error Caught: ${details.exception}');
+  };
+
   runApp(const MyApp());
 }
 
