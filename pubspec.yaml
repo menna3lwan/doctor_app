@@ -22,6 +22,7 @@ dependencies:
     path: ../packages/shared_models
   shared_ui:
     path: ../packages/shared_ui
+  dio: ^5.9.2
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../config/theme.dart';
+import 'package:shared_ui/shared_ui.dart';
 
 // ==================== APP BUTTON ====================
 class AppButton extends StatelessWidget {

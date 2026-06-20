@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'config/theme.dart';
+import 'package:shared_ui/shared_ui.dart';
 import 'config/providers.dart';
 import 'config/routes.dart';
 
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            routerConfig: AppRouter.router,
+            routerConfig: AppRouter.router(context),
             builder: (context, child) {
               return Directionality(
                 textDirection: localeProvider.isArabic

@@ -14,10 +14,27 @@ import '../screens/branches/branches_screen.dart';
 import '../screens/branches/add_branch_screen.dart';
 import '../screens/profile/profile_screen.dart';
 
+import 'package:provider/provider.dart';
+import 'providers.dart';
+
 class AppRouter {
-  static final router = GoRouter(
-    initialLocation: '/login',
-    routes: [
+  static GoRouter router(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
+    return GoRouter(
+      initialLocation: authProvider.isLoggedIn ? '/dashboard' : '/login',
+      refreshListenable: authProvider,
+      redirect: (context, state) {
+        final isLoggedIn = authProvider.isLoggedIn;
+        final isAuthRoute = state.matchedLocation == '/login' ||
+                            state.matchedLocation == '/register' ||
+                            state.matchedLocation == '/pending';
+                            
+        if (!isLoggedIn && !isAuthRoute) return '/login';
+        if (isLoggedIn && isAuthRoute) return '/dashboard';
+        return null;
+      },
+      routes: [
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
       GoRoute(path: '/pending', builder: (_, __) => const PendingScreen()),
@@ -38,4 +55,5 @@ class AppRouter {
       GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
     ],
   );
+  }
 }
