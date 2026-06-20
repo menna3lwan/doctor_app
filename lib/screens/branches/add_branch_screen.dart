@@ -44,7 +44,7 @@ class _AddBranchScreenState extends State<AddBranchScreen> {
       area: _areaController.text,
       address: _addressController.text,
       phone: _phoneController.text,
-      consultationFee: double.parse(_feeController.text),
+      consultationFee: double.tryParse(_feeController.text) ?? 200.0,
       workingDays: _selectedDays,
       startTime: _startTime,
       endTime: _endTime,

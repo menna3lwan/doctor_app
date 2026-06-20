@@ -33,7 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       name: _nameController.text,
       phone: _phoneController.text,
       bio: _bioController.text,
-      fee: double.parse(_feeController.text),
+      fee: double.tryParse(_feeController.text) ?? 200.0,
     );
     setState(() => _isEditing = false);
     final locale = context.read<LocaleProvider>();

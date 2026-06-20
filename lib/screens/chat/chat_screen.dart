@@ -114,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
               itemBuilder: (context, index) {
                 if (_isTyping && index == _messages.length) {
                   return Align(
-                    alignment: Alignment.centerRight,
+                    alignment: AlignmentDirectional.centerStart,
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 8),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -261,7 +261,7 @@ class _MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: message.isMe ? Alignment.centerLeft : Alignment.centerRight,
+      alignment: message.isMe ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
