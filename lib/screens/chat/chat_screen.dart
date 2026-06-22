@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
+import '../../controllers/appointments_controller.dart';
+import '../../config/locale.dart';
 
 class ChatScreen extends StatefulWidget {
   final String appointmentId;
@@ -46,7 +46,6 @@ class _ChatScreenState extends State<ChatScreen> {
       curve: Curves.easeOut,
     );
 
-    // Simulate patient typing
     setState(() => _isTyping = true);
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
@@ -60,113 +59,111 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
-    final appointment = context.watch<AppointmentsProvider>().getAppointmentById(widget.appointmentId);
+    final locale = Get.find<LocaleController>();
+    final appointments = Get.find<AppointmentsController>();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
+    return Obx(() {
+      final appointment = appointments.getAppointmentById(widget.appointmentId);
+      return Scaffold(
+        appBar: AppBar(
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: AppColors.primaryLight,
+                child: Text(appointment?.patient.name[0] ?? 'م', style: const TextStyle(color: AppColors.primary)),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(appointment?.patient.name ?? '', style: const TextStyle(fontSize: 14)),
+                    Text(locale.get('sessionActive'), style: const TextStyle(fontSize: 11, color: AppColors.success)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(icon: const Icon(Icons.videocam), onPressed: () {}),
+            IconButton(icon: const Icon(Icons.more_vert), onPressed: () => _showOptions(context, locale)),
+          ],
+        ),
+        body: Column(
           children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: AppColors.primaryLight,
-              child: Text(appointment?.patient.name[0] ?? 'م', style: const TextStyle(color: AppColors.primary)),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              color: AppColors.primaryLight.withOpacity(0.3),
+              child: Row(
                 children: [
-                  Text(appointment?.patient.name ?? '', style: const TextStyle(fontSize: 14)),
-                  Text(locale.get('sessionActive'), style: const TextStyle(fontSize: 11, color: AppColors.success)),
+                  const Icon(Icons.info_outline, size: 18, color: AppColors.primary),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text('${locale.get('online')} - ${appointment?.time ?? ''}', style: const TextStyle(fontSize: 12))),
                 ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(16),
+                itemCount: _messages.length + (_isTyping ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (_isTyping && index == _messages.length) {
+                    return Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(16)),
+                        child: Text(locale.get('patientTyping'), style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                      ),
+                    );
+                  }
+                  final msg = _messages[index];
+                  return _MessageBubble(message: msg);
+                },
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -2))],
+              ),
+              child: SafeArea(
+                child: Row(
+                  children: [
+                    IconButton(icon: const Icon(Icons.attach_file), onPressed: () => _showAttachOptions(context)),
+                    Expanded(
+                      child: TextField(
+                        controller: _messageController,
+                        decoration: InputDecoration(
+                          hintText: locale.get('typeMessage'),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
+                          filled: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        ),
+                        onSubmitted: (_) => _sendMessage(),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    CircleAvatar(
+                      backgroundColor: AppColors.primary,
+                      child: IconButton(icon: const Icon(Icons.send, color: Colors.white, size: 20), onPressed: _sendMessage),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
-        actions: [
-          IconButton(icon: const Icon(Icons.videocam), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.more_vert), onPressed: () => _showOptions(context, locale)),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Session Info Banner
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            color: AppColors.primaryLight.withOpacity(0.3),
-            child: Row(
-              children: [
-                const Icon(Icons.info_outline, size: 18, color: AppColors.primary),
-                const SizedBox(width: 8),
-                Expanded(child: Text('${locale.get('online')} - ${appointment?.time ?? ''}', style: const TextStyle(fontSize: 12))),
-              ],
-            ),
-          ),
-
-          // Messages
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16),
-              itemCount: _messages.length + (_isTyping ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (_isTyping && index == _messages.length) {
-                  return Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(16)),
-                      child: Text(locale.get('patientTyping'), style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-                    ),
-                  );
-                }
-                final msg = _messages[index];
-                return _MessageBubble(message: msg);
-              },
-            ),
-          ),
-
-          // Input
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -2))],
-            ),
-            child: SafeArea(
-              child: Row(
-                children: [
-                  IconButton(icon: const Icon(Icons.attach_file), onPressed: () => _showAttachOptions(context)),
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: InputDecoration(
-                        hintText: locale.get('typeMessage'),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
-                        filled: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      ),
-                      onSubmitted: (_) => _sendMessage(),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  CircleAvatar(
-                    backgroundColor: AppColors.primary,
-                    child: IconButton(icon: const Icon(Icons.send, color: Colors.white, size: 20), onPressed: _sendMessage),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+      );
+    });
   }
 
-  void _showOptions(BuildContext context, LocaleProvider locale) {
+  void _showOptions(BuildContext context, LocaleController locale) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
@@ -199,19 +196,19 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _showEndDialog(BuildContext context, LocaleProvider locale) {
+  void _showEndDialog(BuildContext context, LocaleController locale) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(locale.get('endConsultation')),
         content: const Text('هل أنت متأكدة من إنهاء الاستشارة؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(locale.get('cancel'))),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: Text(locale.get('cancel'))),
           ElevatedButton(
             onPressed: () {
-              context.read<AppointmentsProvider>().completeAppointment(widget.appointmentId);
-              Navigator.pop(context);
-              context.go('/dashboard');
+              Get.find<AppointmentsController>().completeAppointment(widget.appointmentId);
+              Navigator.pop(dialogContext);
+              Get.offAllNamed('/dashboard');
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(locale.get('success')), backgroundColor: AppColors.success));
             },
             child: const Text('إنهاء'),

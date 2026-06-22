@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
-import '../../widgets/widgets.dart';
+import '../../controllers/auth_controller.dart';
+import '../../config/locale.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -33,7 +32,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
     
-    final success = await context.read<AuthProvider>().register(
+    final auth = Get.find<AuthController>();
+    final success = await auth.register(
       name: _nameController.text,
       email: _emailController.text,
       phone: _phoneController.text,
@@ -44,23 +44,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
       bio: _bioController.text,
     );
 
-    if (success && mounted) {
-      context.go('/pending');
+    if (success) {
+      Get.offAllNamed('/pending');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
-    final auth = context.watch<AuthProvider>();
+    final locale = Get.find<LocaleController>();
+    final auth = Get.find<AuthController>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(locale.get('register'))),
+      appBar: AppBar(title: Obx(() => Text(locale.get('register')))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: Obx(() => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
@@ -154,7 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               AppButton(
                 text: locale.get('register'),
-                isLoading: auth.isLoading,
+                isLoading: auth.isLoading.value,
                 onPressed: _register,
               ),
               const SizedBox(height: 16),
@@ -164,13 +164,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   Text(locale.get('alreadyHaveAccount')),
                   TextButton(
-                    onPressed: () => context.pop(),
+                    onPressed: () => Get.back(),
                     child: Text(locale.get('loginNow')),
                   ),
                 ],
               ),
             ],
-          ),
+          )),
         ),
       ),
     );

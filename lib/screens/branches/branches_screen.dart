@@ -1,129 +1,131 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
+import '../../controllers/branches_controller.dart';
+import '../../config/locale.dart';
 
 class BranchesScreen extends StatelessWidget {
   const BranchesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
-    final provider = context.watch<BranchesProvider>();
-    final branches = provider.branches;
+    final locale = Get.find<LocaleController>();
+    final controller = Get.find<BranchesController>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(locale.get('branches'))),
+      appBar: AppBar(title: Obx(() => Text(locale.get('branches')))),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/add-branch'),
+        onPressed: () => Get.toNamed('/add-branch'),
         icon: const Icon(Icons.add),
-        label: Text(locale.get('addBranch')),
+        label: Obx(() => Text(locale.get('addBranch'))),
       ),
-      body: branches.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.location_off, size: 64, color: AppColors.divider),
-                  const SizedBox(height: 16),
-                  Text(locale.get('noBranches'), style: const TextStyle(color: AppColors.textSecondary)),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () => context.push('/add-branch'),
-                    icon: const Icon(Icons.add),
-                    label: Text(locale.get('addBranch')),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: branches.length,
-              itemBuilder: (context, index) {
-                final branch = branches[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: branch.isActive ? AppColors.success.withOpacity(0.1) : AppColors.divider,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(Icons.location_on, color: branch.isActive ? AppColors.success : AppColors.textSecondary),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(branch.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                  Text('${branch.governorate} - ${branch.area}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                                ],
-                              ),
-                            ),
-                            Switch(
-                              value: branch.isActive,
-                              activeColor: AppColors.success,
-                              onChanged: (v) => provider.toggleBranchActive(branch.id),
-                            ),
-                          ],
-                        ),
-                        const Divider(height: 24),
-                        Row(
-                          children: [
-                            _InfoChip(icon: Icons.attach_money, label: '${branch.consultationFee.toInt()} جنيه'),
-                            const SizedBox(width: 8),
-                            _InfoChip(icon: Icons.access_time, label: '${branch.startTime} - ${branch.endTime}'),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 4,
-                          children: branch.workingDays.map((day) => Chip(
-                            label: Text(day, style: const TextStyle(fontSize: 10)),
-                            padding: EdgeInsets.zero,
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          )).toList(),
-                        ),
-                        const Divider(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () => _showDeleteDialog(context, branch.id, locale, provider),
-                                style: OutlinedButton.styleFrom(foregroundColor: AppColors.error),
-                                icon: const Icon(Icons.delete, size: 18),
-                                label: Text(locale.get('delete')),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(Icons.edit, size: 18),
-                                label: Text(locale.get('edit')),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+      body: Obx(() {
+        final branches = controller.branches;
+        return branches.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.location_off, size: 64, color: AppColors.divider),
+                    const SizedBox(height: 16),
+                    Text(locale.get('noBranches'), style: const TextStyle(color: AppColors.textSecondary)),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: () => Get.toNamed('/add-branch'),
+                      icon: const Icon(Icons.add),
+                      label: Text(locale.get('addBranch')),
                     ),
-                  ),
-                );
-              },
-            ),
+                  ],
+                ),
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: branches.length,
+                itemBuilder: (context, index) {
+                  final branch = branches[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: branch.isActive ? AppColors.success.withOpacity(0.1) : AppColors.divider,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(Icons.location_on, color: branch.isActive ? AppColors.success : AppColors.textSecondary),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(branch.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                    Text('${branch.governorate} - ${branch.area}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                                  ],
+                                ),
+                              ),
+                              Switch(
+                                value: branch.isActive,
+                                activeColor: AppColors.success,
+                                onChanged: (v) => controller.toggleBranchActive(branch.id),
+                              ),
+                            ],
+                          ),
+                          const Divider(height: 24),
+                          Row(
+                            children: [
+                              _InfoChip(icon: Icons.attach_money, label: '${branch.consultationFee.toInt()} جنيه'),
+                              const SizedBox(width: 8),
+                              _InfoChip(icon: Icons.access_time, label: '${branch.startTime} - ${branch.endTime}'),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 4,
+                            children: branch.workingDays.map((day) => Chip(
+                              label: Text(day, style: const TextStyle(fontSize: 10)),
+                              padding: EdgeInsets.zero,
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            )).toList(),
+                          ),
+                          const Divider(height: 24),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: () => _showDeleteDialog(context, branch.id, locale, controller),
+                                  style: OutlinedButton.styleFrom(foregroundColor: AppColors.error),
+                                  icon: const Icon(Icons.delete, size: 18),
+                                  label: Text(locale.get('delete')),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.edit, size: 18),
+                                  label: Text(locale.get('edit')),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+      }),
     );
   }
 
-  void _showDeleteDialog(BuildContext context, String id, LocaleProvider locale, BranchesProvider provider) {
+  void _showDeleteDialog(BuildContext context, String id, LocaleController locale, BranchesController controller) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -134,7 +136,7 @@ class BranchesScreen extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
             onPressed: () {
-              provider.deleteBranch(id);
+              controller.deleteBranch(id);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(locale.get('success')), backgroundColor: AppColors.success));
             },

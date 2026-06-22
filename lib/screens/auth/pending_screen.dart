@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
+import '../../config/locale.dart';
 
 class PendingScreen extends StatelessWidget {
   const PendingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
+    final locale = Get.find<LocaleController>();
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(32),
-          child: Column(
+          child: Obx(() => Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
@@ -31,12 +30,12 @@ class PendingScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: () => context.go('/login'),
+                  onPressed: () => Get.offAllNamed('/login'),
                   child: Text(locale.get('logout')),
                 ),
               ),
             ],
-          ),
+          )),
         ),
       ),
     );

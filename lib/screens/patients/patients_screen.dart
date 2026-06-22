@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
+import '../../controllers/patients_controller.dart';
+import '../../config/locale.dart';
 import '../../widgets/widgets.dart';
 
 class PatientsScreen extends StatelessWidget {
@@ -9,57 +10,59 @@ class PatientsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
-    final provider = context.watch<PatientsProvider>();
-    final patients = provider.patients;
+    final locale = Get.find<LocaleController>();
+    final controller = Get.find<PatientsController>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(locale.get('patients'))),
+      appBar: AppBar(title: Obx(() => Text(locale.get('patients')))),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: TextField(
+            child: Obx(() => TextField(
               decoration: InputDecoration(
                 hintText: locale.get('searchPatient'),
                 prefixIcon: const Icon(Icons.search),
               ),
-              onChanged: (v) => provider.setSearchQuery(v),
-            ),
+              onChanged: (v) => controller.setSearchQuery(v),
+            )),
           ),
           Expanded(
-            child: patients.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.people_outline, size: 64, color: AppColors.divider),
-                        const SizedBox(height: 16),
-                        Text(locale.get('noPatients'), style: const TextStyle(color: AppColors.textSecondary)),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: patients.length,
-                    itemBuilder: (context, index) {
-                      final patient = patients[index];
-                      return PatientCard(
-                        name: patient.name,
-                        phone: patient.phone,
-                        visits: patient.visitsCount,
-                        lastVisit: patient.lastVisit,
-                        onTap: () => _showPatientDetails(context, patient, locale),
-                      );
-                    },
-                  ),
+            child: Obx(() {
+              final patients = controller.patients;
+              return patients.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.people_outline, size: 64, color: AppColors.divider),
+                          const SizedBox(height: 16),
+                          Text(locale.get('noPatients'), style: const TextStyle(color: AppColors.textSecondary)),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: patients.length,
+                      itemBuilder: (context, index) {
+                        final patient = patients[index];
+                        return PatientCard(
+                          name: patient.name,
+                          phone: patient.phone,
+                          visits: patient.visitsCount,
+                          lastVisit: patient.lastVisit,
+                          onTap: () => _showPatientDetails(context, patient, locale),
+                        );
+                      },
+                    );
+            }),
           ),
         ],
       ),
     );
   }
 
-  void _showPatientDetails(BuildContext context, dynamic patient, LocaleProvider locale) {
+  void _showPatientDetails(BuildContext context, dynamic patient, LocaleController locale) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),

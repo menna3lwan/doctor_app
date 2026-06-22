@@ -1,43 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
+import 'package:get/get.dart';
+import '../../config/locale.dart';
+import '../dashboard/dashboard_screen.dart';
+import '../appointments/appointments_screen.dart';
+import '../patients/patients_screen.dart';
+import '../settings/settings_screen.dart';
 
-class MainScreen extends StatelessWidget {
-  final Widget child;
-  const MainScreen({super.key, required this.child});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _currentIndex = 0;
+
+  final _screens = const [
+    DashboardScreen(),
+    AppointmentsScreen(),
+    PatientsScreen(),
+    SettingsScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
-    final currentLocation = GoRouterState.of(context).uri.toString();
-
-    int currentIndex = 0;
-    if (currentLocation.startsWith('/dashboard')) currentIndex = 0;
-    else if (currentLocation.startsWith('/appointments')) currentIndex = 1;
-    else if (currentLocation.startsWith('/patients')) currentIndex = 2;
-    else if (currentLocation.startsWith('/settings')) currentIndex = 3;
+    final locale = Get.find<LocaleController>();
 
     return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: (index) {
-          switch (index) {
-            case 0: context.go('/dashboard'); break;
-            case 1: context.go('/appointments'); break;
-            case 2: context.go('/patients'); break;
-            case 3: context.go('/settings'); break;
-          }
-        },
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
+      ),
+      bottomNavigationBar: Obx(() => BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
         items: [
           BottomNavigationBarItem(icon: const Icon(Icons.dashboard), label: locale.get('dashboard')),
           BottomNavigationBarItem(icon: const Icon(Icons.calendar_today), label: locale.get('appointments')),
           BottomNavigationBarItem(icon: const Icon(Icons.people), label: locale.get('patients')),
           BottomNavigationBarItem(icon: const Icon(Icons.settings), label: locale.get('settings')),
         ],
-      ),
+      )),
     );
   }
 }

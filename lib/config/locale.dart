@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class LocaleProvider extends ChangeNotifier {
-  bool _isArabic = true;
+class LocaleController extends GetxController {
+  final isArabic = true.obs;
 
-  bool get isArabic => _isArabic;
-  Locale get locale => _isArabic ? const Locale('ar') : const Locale('en');
+  Locale get locale => isArabic.value ? const Locale('ar') : const Locale('en');
+  TextDirection get textDirection =>
+      isArabic.value ? TextDirection.rtl : TextDirection.ltr;
 
   void setArabic() {
-    _isArabic = true;
-    notifyListeners();
+    isArabic.value = true;
   }
 
   void setEnglish() {
-    _isArabic = false;
-    notifyListeners();
+    isArabic.value = false;
   }
 
   void toggleLocale() {
-    _isArabic = !_isArabic;
-    notifyListeners();
+    isArabic.value = !isArabic.value;
   }
 
   String get(String key) {
-    return _isArabic ? _ar[key] ?? key : _en[key] ?? key;
+    return isArabic.value ? _ar[key] ?? key : _en[key] ?? key;
   }
 
   static const Map<String, String> _ar = {
@@ -40,6 +39,8 @@ class LocaleProvider extends ChangeNotifier {
     'success': 'تم بنجاح',
     'noResults': 'لا توجد نتائج',
     'version': 'الإصدار',
+    'hello': 'مرحباً',
+    'reviews': 'التقييمات',
 
     // Auth
     'login': 'تسجيل الدخول',
@@ -151,6 +152,8 @@ class LocaleProvider extends ChangeNotifier {
     'success': 'Success',
     'noResults': 'No results found',
     'version': 'Version',
+    'hello': 'Hello',
+    'reviews': 'Reviews',
 
     // Auth
     'login': 'Login',

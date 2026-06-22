@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
+import '../../controllers/branches_controller.dart';
+import '../../config/locale.dart';
 import '../../models/models.dart';
-import '../../widgets/widgets.dart';
 
 class AddBranchScreen extends StatefulWidget {
   const AddBranchScreen({super.key});
@@ -50,21 +49,21 @@ class _AddBranchScreenState extends State<AddBranchScreen> {
       endTime: _endTime,
     );
 
-    context.read<BranchesProvider>().addBranch(branch);
-    final locale = context.read<LocaleProvider>();
+    Get.find<BranchesController>().addBranch(branch);
+    final locale = Get.find<LocaleController>();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(locale.get('branchAdded')), backgroundColor: AppColors.success));
-    context.pop();
+    Get.back();
   }
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
+    final locale = Get.find<LocaleController>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(locale.get('addBranch'))),
+      appBar: AppBar(title: Obx(() => Text(locale.get('addBranch')))),
       body: Form(
         key: _formKey,
-        child: ListView(
+        child: Obx(() => ListView(
           padding: const EdgeInsets.all(16),
           children: [
             AppTextField(
@@ -118,7 +117,6 @@ class _AddBranchScreenState extends State<AddBranchScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Working Days
             Text(locale.get('workingDays'), style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Wrap(
@@ -145,7 +143,6 @@ class _AddBranchScreenState extends State<AddBranchScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Working Hours
             Text(locale.get('workingHours'), style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Row(
@@ -173,7 +170,7 @@ class _AddBranchScreenState extends State<AddBranchScreen> {
 
             AppButton(text: locale.get('saveBranch'), onPressed: _saveBranch),
           ],
-        ),
+        )),
       ),
     );
   }

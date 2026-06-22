@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
+import '../../controllers/appointments_controller.dart';
+import '../../config/locale.dart';
 import '../../widgets/widgets.dart';
 
 class AppointmentsScreen extends StatefulWidget {
@@ -23,33 +23,36 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
-    final provider = context.watch<AppointmentsProvider>();
+    final locale = Get.find<LocaleController>();
+    final controller = Get.find<AppointmentsController>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(locale.get('appointments')),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: '${locale.get('pending')} (${provider.pendingAppointments.length})'),
-            Tab(text: '${locale.get('confirmed')} (${provider.confirmedAppointments.length})'),
-            Tab(text: '${locale.get('completed')} (${provider.completedAppointments.length})'),
-          ],
+        title: Obx(() => Text(locale.get('appointments'))),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Obx(() => TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: '${locale.get('pending')} (${controller.pendingAppointments.length})'),
+              Tab(text: '${locale.get('confirmed')} (${controller.confirmedAppointments.length})'),
+              Tab(text: '${locale.get('completed')} (${controller.completedAppointments.length})'),
+            ],
+          )),
         ),
       ),
-      body: TabBarView(
+      body: Obx(() => TabBarView(
         controller: _tabController,
         children: [
-          _buildList(provider.pendingAppointments, 'pending', locale, provider),
-          _buildList(provider.confirmedAppointments, 'confirmed', locale, provider),
-          _buildList(provider.completedAppointments, 'completed', locale, provider),
+          _buildList(controller.pendingAppointments, 'pending', locale, controller),
+          _buildList(controller.confirmedAppointments, 'confirmed', locale, controller),
+          _buildList(controller.completedAppointments, 'completed', locale, controller),
         ],
-      ),
+      )),
     );
   }
 
-  Widget _buildList(List list, String type, LocaleProvider locale, AppointmentsProvider provider) {
+  Widget _buildList(List list, String type, LocaleController locale, AppointmentsController controller) {
     if (list.isEmpty) {
       return Center(
         child: Column(
@@ -77,19 +80,19 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> with SingleTick
           type: apt.type,
           status: apt.status,
           onAccept: type == 'pending' ? () {
-            provider.acceptAppointment(apt.id);
+            controller.acceptAppointment(apt.id);
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(locale.get('success')), backgroundColor: AppColors.success));
           } : null,
           onReject: type == 'pending' ? () {
-            _showRejectDialog(apt.id, locale, provider);
+            _showRejectDialog(apt.id, locale, controller);
           } : null,
-          onStart: type == 'confirmed' ? () => context.push('/chat/${apt.id}') : null,
+          onStart: type == 'confirmed' ? () => Get.toNamed('/chat/${apt.id}') : null,
         );
       },
     );
   }
 
-  void _showRejectDialog(String id, LocaleProvider locale, AppointmentsProvider provider) {
+  void _showRejectDialog(String id, LocaleController locale, AppointmentsController controller) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -100,7 +103,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> with SingleTick
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
             onPressed: () {
-              provider.rejectAppointment(id);
+              controller.rejectAppointment(id);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(locale.get('success')), backgroundColor: AppColors.error));
             },

@@ -7,7 +7,8 @@ class AuthRepository {
   AuthRepository({ApiClient? apiClient}) : _apiClient = apiClient ?? ApiClient();
 
   Future<DoctorModel?> login(String email, String password) async {
-    // TODO: Replace with actual API call
+    // TODO: Replace with actual API call using _apiClient.client.post('/auth/login', ...)
+    _ = _apiClient; // Suppress unused_field until real API integration
     await Future.delayed(const Duration(seconds: 1));
     
     if (email == 'doctor@hen.com' && password == '123456') {

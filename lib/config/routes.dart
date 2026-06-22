@@ -1,59 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
+import 'package:get/get.dart';
+import '../controllers/auth_controller.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/pending_screen.dart';
 import '../screens/dashboard/main_screen.dart';
-import '../screens/dashboard/dashboard_screen.dart';
-import '../screens/appointments/appointments_screen.dart';
-import '../screens/patients/patients_screen.dart';
-import '../screens/settings/settings_screen.dart';
 import '../screens/chat/chat_screen.dart';
 import '../screens/branches/branches_screen.dart';
 import '../screens/branches/add_branch_screen.dart';
 import '../screens/profile/profile_screen.dart';
 
-import 'package:provider/provider.dart';
-import 'providers.dart';
+class AppRoutes {
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String pending = '/pending';
+  static const String dashboard = '/dashboard';
+  static const String chat = '/chat';
+  static const String branches = '/branches';
+  static const String addBranch = '/add-branch';
+  static const String profile = '/profile';
 
-class AppRouter {
-  static GoRouter router(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    
-    return GoRouter(
-      initialLocation: authProvider.isLoggedIn ? '/dashboard' : '/login',
-      refreshListenable: authProvider,
-      redirect: (context, state) {
-        final isLoggedIn = authProvider.isLoggedIn;
-        final isAuthRoute = state.matchedLocation == '/login' ||
-                            state.matchedLocation == '/register' ||
-                            state.matchedLocation == '/pending';
-                            
-        if (!isLoggedIn && !isAuthRoute) return '/login';
-        if (isLoggedIn && isAuthRoute) return '/dashboard';
-        return null;
-      },
-      routes: [
-      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
-      GoRoute(path: '/pending', builder: (_, __) => const PendingScreen()),
-      
-      ShellRoute(
-        builder: (_, __, child) => MainScreen(child: child),
-        routes: [
-          GoRoute(path: '/dashboard', builder: (_, __) => const DashboardScreen()),
-          GoRoute(path: '/appointments', builder: (_, __) => const AppointmentsScreen()),
-          GoRoute(path: '/patients', builder: (_, __) => const PatientsScreen()),
-          GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
-        ],
-      ),
-      
-      GoRoute(path: '/chat/:id', builder: (_, state) => ChatScreen(appointmentId: state.pathParameters['id']!)),
-      GoRoute(path: '/branches', builder: (_, __) => const BranchesScreen()),
-      GoRoute(path: '/add-branch', builder: (_, __) => const AddBranchScreen()),
-      GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
-    ],
-  );
+  static String get initialRoute {
+    final auth = Get.find<AuthController>();
+    return auth.isLoggedIn.value ? dashboard : login;
+  }
+
+  static List<GetPage> get pages => [
+        GetPage(
+          name: login,
+          page: () => const LoginScreen(),
+        ),
+        GetPage(
+          name: register,
+          page: () => const RegisterScreen(),
+        ),
+        GetPage(
+          name: pending,
+          page: () => const PendingScreen(),
+        ),
+        GetPage(
+          name: dashboard,
+          page: () => const MainScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '$chat/:id',
+          page: () => ChatScreen(appointmentId: Get.parameters['id']!),
+        ),
+        GetPage(
+          name: branches,
+          page: () => const BranchesScreen(),
+        ),
+        GetPage(
+          name: addBranch,
+          page: () => const AddBranchScreen(),
+        ),
+        GetPage(
+          name: profile,
+          page: () => const ProfileScreen(),
+        ),
+      ];
+}
+
+class AuthMiddleware extends GetMiddleware {
+  @override
+  int? get priority => 0;
+
+  @override
+  RouteSettings? redirect(String? route) {
+    final auth = Get.find<AuthController>();
+    if (!auth.isLoggedIn.value) {
+      return const RouteSettings(name: AppRoutes.login);
+    }
+    return null;
   }
 }

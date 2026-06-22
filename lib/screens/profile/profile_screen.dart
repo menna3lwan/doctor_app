@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
-import '../../widgets/widgets.dart';
+import '../../controllers/auth_controller.dart';
+import '../../config/locale.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -21,7 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final doctor = context.read<AuthProvider>().doctor;
+    final doctor = Get.find<AuthController>().doctor.value;
     _nameController = TextEditingController(text: doctor?.name ?? '');
     _phoneController = TextEditingController(text: doctor?.phone ?? '');
     _bioController = TextEditingController(text: doctor?.bio ?? '');
@@ -29,25 +29,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _saveProfile() {
-    context.read<AuthProvider>().updateProfile(
+    Get.find<AuthController>().updateProfile(
       name: _nameController.text,
       phone: _phoneController.text,
       bio: _bioController.text,
       fee: double.tryParse(_feeController.text) ?? 200.0,
     );
     setState(() => _isEditing = false);
-    final locale = context.read<LocaleProvider>();
+    final locale = Get.find<LocaleController>();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(locale.get('success')), backgroundColor: AppColors.success));
   }
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
-    final doctor = context.watch<AuthProvider>().doctor;
+    final locale = Get.find<LocaleController>();
+    final auth = Get.find<AuthController>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(locale.get('profile')),
+        title: Obx(() => Text(locale.get('profile'))),
         actions: [
           if (!_isEditing)
             IconButton(icon: const Icon(Icons.edit), onPressed: () => setState(() => _isEditing = true))
@@ -55,91 +55,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(icon: const Icon(Icons.close), onPressed: () => setState(() => _isEditing = false)),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Avatar
-          Center(
-            child: Stack(
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: AppColors.primaryLight,
-                  child: Text(doctor?.name[0] ?? 'د', style: const TextStyle(fontSize: 48, color: AppColors.primary)),
-                ),
-                if (_isEditing)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: CircleAvatar(
-                      backgroundColor: AppColors.primary,
-                      radius: 18,
-                      child: IconButton(
-                        icon: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
-                        onPressed: () {},
+      body: Obx(() {
+        final doctor = auth.doctor.value;
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // Avatar
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: AppColors.primaryLight,
+                    child: Text(doctor?.name[0] ?? 'د', style: const TextStyle(fontSize: 48, color: AppColors.primary)),
+                  ),
+                  if (_isEditing)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.primary,
+                        radius: 18,
+                        child: IconButton(
+                          icon: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
+                          onPressed: () {},
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Center(child: Text(doctor?.specialtyAr ?? '', style: const TextStyle(color: AppColors.textSecondary))),
-          const SizedBox(height: 24),
-
-          // Stats
-          Row(
-            children: [
-              Expanded(child: _StatCard(icon: Icons.star, value: '${doctor?.rating ?? 0}', label: locale.get('rating'), color: Colors.amber)),
-              const SizedBox(width: 8),
-              Expanded(child: _StatCard(icon: Icons.people, value: '${doctor?.patientsCount ?? 0}', label: locale.get('patients'), color: Colors.blue)),
-              const SizedBox(width: 8),
-              Expanded(child: _StatCard(icon: Icons.reviews, value: '${doctor?.reviewsCount ?? 0}', label: locale.get('reviews'), color: Colors.green)),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // Form
-          if (_isEditing) ...[
-            AppTextField(controller: _nameController, label: locale.get('name'), prefixIcon: const Icon(Icons.person)),
-            const SizedBox(height: 16),
-            AppTextField(controller: _phoneController, label: locale.get('phone'), prefixIcon: const Icon(Icons.phone), keyboardType: TextInputType.phone),
-            const SizedBox(height: 16),
-            AppTextField(controller: _feeController, label: locale.get('consultationFee'), prefixIcon: const Icon(Icons.attach_money), keyboardType: TextInputType.number),
-            const SizedBox(height: 16),
-            AppTextField(controller: _bioController, label: locale.get('bio'), maxLines: 4),
-            const SizedBox(height: 24),
-            AppButton(text: locale.get('save'), onPressed: _saveProfile),
-          ] else ...[
-            _InfoCard(icon: Icons.person, label: locale.get('name'), value: doctor?.name ?? ''),
-            _InfoCard(icon: Icons.email, label: locale.get('email'), value: doctor?.email ?? ''),
-            _InfoCard(icon: Icons.phone, label: locale.get('phone'), value: doctor?.phone ?? ''),
-            _InfoCard(icon: Icons.badge, label: locale.get('licenseNumber'), value: doctor?.licenseNumber ?? ''),
-            _InfoCard(icon: Icons.work, label: locale.get('experience'), value: '${doctor?.experienceYears ?? 0} سنة'),
-            _InfoCard(icon: Icons.attach_money, label: locale.get('consultationFee'), value: '${doctor?.consultationFee.toInt() ?? 0} جنيه'),
-            const SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.info, color: AppColors.primary, size: 20),
-                        const SizedBox(width: 8),
-                        Text(locale.get('bio'), style: const TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(doctor?.bio ?? '', style: const TextStyle(height: 1.5)),
-                  ],
-                ),
+                ],
               ),
             ),
+            const SizedBox(height: 8),
+            Center(child: Text(doctor?.specialtyAr ?? '', style: const TextStyle(color: AppColors.textSecondary))),
+            const SizedBox(height: 24),
+
+            // Stats
+            Row(
+              children: [
+                Expanded(child: _StatCard(icon: Icons.star, value: '${doctor?.rating ?? 0}', label: locale.get('rating'), color: Colors.amber)),
+                const SizedBox(width: 8),
+                Expanded(child: _StatCard(icon: Icons.people, value: '${doctor?.patientsCount ?? 0}', label: locale.get('patients'), color: Colors.blue)),
+                const SizedBox(width: 8),
+                Expanded(child: _StatCard(icon: Icons.reviews, value: '${doctor?.reviewsCount ?? 0}', label: 'التقييمات', color: Colors.green)),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // Form
+            if (_isEditing) ...[
+              AppTextField(controller: _nameController, label: locale.get('name'), prefixIcon: const Icon(Icons.person)),
+              const SizedBox(height: 16),
+              AppTextField(controller: _phoneController, label: locale.get('phone'), prefixIcon: const Icon(Icons.phone), keyboardType: TextInputType.phone),
+              const SizedBox(height: 16),
+              AppTextField(controller: _feeController, label: locale.get('consultationFee'), prefixIcon: const Icon(Icons.attach_money), keyboardType: TextInputType.number),
+              const SizedBox(height: 16),
+              AppTextField(controller: _bioController, label: locale.get('bio'), maxLines: 4),
+              const SizedBox(height: 24),
+              AppButton(text: locale.get('save'), onPressed: _saveProfile),
+            ] else ...[
+              _InfoCard(icon: Icons.person, label: locale.get('name'), value: doctor?.name ?? ''),
+              _InfoCard(icon: Icons.email, label: locale.get('email'), value: doctor?.email ?? ''),
+              _InfoCard(icon: Icons.phone, label: locale.get('phone'), value: doctor?.phone ?? ''),
+              _InfoCard(icon: Icons.badge, label: locale.get('licenseNumber'), value: doctor?.licenseNumber ?? ''),
+              _InfoCard(icon: Icons.work, label: locale.get('experience'), value: '${doctor?.experienceYears ?? 0} سنة'),
+              _InfoCard(icon: Icons.attach_money, label: locale.get('consultationFee'), value: '${doctor?.consultationFee.toInt() ?? 0} جنيه'),
+              const SizedBox(height: 16),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.info, color: AppColors.primary, size: 20),
+                          const SizedBox(width: 8),
+                          Text(locale.get('bio'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(doctor?.bio ?? '', style: const TextStyle(height: 1.5)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ],
-        ],
-      ),
+        );
+      }),
     );
   }
 

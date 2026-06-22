@@ -95,7 +95,6 @@ class AppTheme {
         ),
       ),
 
-      /// ✅ هنا الإصلاح
       cardTheme: CardThemeData(
         elevation: 0,
         color: AppColors.surface,
@@ -111,7 +110,6 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
       ),
 
-      /// ✅ وهنا كمان
       tabBarTheme: TabBarThemeData(
         labelColor: AppColors.primary,
         unselectedLabelColor: AppColors.textSecondary,
@@ -178,7 +176,6 @@ class AppTheme {
         ),
       ),
 
-      /// ✅ CardThemeData
       cardTheme: CardThemeData(
         elevation: 0,
         color: const Color(0xFF2D2D2D),
@@ -187,18 +184,5 @@ class AppTheme {
         ),
       ),
     );
-  }
-}
-
-class ThemeProvider extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.light;
-
-  ThemeMode get themeMode => _themeMode;
-  bool get isDark => _themeMode == ThemeMode.dark;
-
-  void toggleTheme() {
-    _themeMode =
-        _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    notifyListeners();
   }
 }

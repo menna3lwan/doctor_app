@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:shared_ui/shared_ui.dart';
-import '../../config/providers.dart';
-import '../../widgets/widgets.dart';
+import '../../controllers/auth_controller.dart';
+import '../../config/locale.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,15 +20,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
     
-    final success = await context.read<AuthProvider>().login(
+    final auth = Get.find<AuthController>();
+    final success = await auth.login(
       _emailController.text,
       _passwordController.text,
     );
 
-    if (success && mounted) {
-      context.go('/dashboard');
+    if (success) {
+      Get.offAllNamed('/dashboard');
     } else if (mounted) {
-      final locale = context.read<LocaleProvider>();
+      final locale = Get.find<LocaleController>();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(locale.get('error')), backgroundColor: AppColors.error),
       );
@@ -38,8 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleProvider>();
-    final auth = context.watch<AuthProvider>();
+    final locale = Get.find<LocaleController>();
+    final auth = Get.find<AuthController>();
 
     return Scaffold(
       body: SafeArea(
@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
-            child: Column(
+            child: Obx(() => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 40),
@@ -68,12 +68,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     TextButton(
                       onPressed: () => locale.setArabic(),
-                      child: Text('العربية', style: TextStyle(color: locale.isArabic ? AppColors.primary : AppColors.textSecondary, fontWeight: locale.isArabic ? FontWeight.bold : null)),
+                      child: Text('العربية', style: TextStyle(color: locale.isArabic.value ? AppColors.primary : AppColors.textSecondary, fontWeight: locale.isArabic.value ? FontWeight.bold : null)),
                     ),
                     const Text('|'),
                     TextButton(
                       onPressed: () => locale.setEnglish(),
-                      child: Text('English', style: TextStyle(color: !locale.isArabic ? AppColors.primary : AppColors.textSecondary, fontWeight: !locale.isArabic ? FontWeight.bold : null)),
+                      child: Text('English', style: TextStyle(color: !locale.isArabic.value ? AppColors.primary : AppColors.textSecondary, fontWeight: !locale.isArabic.value ? FontWeight.bold : null)),
                     ),
                   ],
                 ),
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 AppButton(
                   text: locale.get('login'),
-                  isLoading: auth.isLoading,
+                  isLoading: auth.isLoading.value,
                   onPressed: _login,
                 ),
                 const SizedBox(height: 24),
@@ -114,13 +114,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(locale.get('dontHaveAccount')),
                     TextButton(
-                      onPressed: () => context.push('/register'),
+                      onPressed: () => Get.toNamed('/register'),
                       child: Text(locale.get('registerNow')),
                     ),
                   ],
                 ),
               ],
-            ),
+            )),
           ),
         ),
       ),
